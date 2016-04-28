@@ -41,25 +41,19 @@ int main()
 	start = clock();
 
 	// add every word to Map.
-	while(!file.eof())
+	string word;
+	while(file >> word)
 	{
-		string word;
-		file >> word;
 		structure->add(word);
 	}
 
-	duration = ( clock() - start ) / (double)CLOCKS_PER_SEC;
 
 	// print everything in Map
-	stringstream ss;
-	structure->reportAll(ss);
+	ofstream exportFile("report.out");
+	structure->reportAll(exportFile);
+	duration = ( clock() - start ) / (double)CLOCKS_PER_SEC;
+	
 	cout << endl;
-	while(!ss.eof())
-	{
-		string line;
-		getline(ss, line);
-		cout << line << endl;
-	}
 
 	// end clock, return duration
 	cout << "Duration: " << duration << endl;

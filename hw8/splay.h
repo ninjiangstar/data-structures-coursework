@@ -1,19 +1,23 @@
 #include "Map.h"
 #include "bst.h"
-#include <map> // for reportAll, do char conversion there to make insertion faster
 
 class Splay : public Map, BinarySearchTree<std::string, int>
 {
 public:
+	Splay() : count(0) {}
+	~Splay() {}
+
 	void add(const std::string& word)
 	{
 		Node<std::string, int> * curr;
-		curr = this->internalFind(word);
+		const std::string newWord = convertToLower(word);
+		curr = this->internalFind(newWord);
 		if(curr) curr->setValue(curr->getValue()+1); // increment
 		else
 		{	// couldn't find item.
-			insert(std::make_pair(word, 1));
-			curr = this->internalFind(word);
+			insert(std::make_pair(newWord, 1));
+			curr = this->internalFind(newWord);
+			count++;
 		}
 
 		splay(curr);
@@ -21,17 +25,14 @@ public:
 
 	void reportAll(std::ostream& output)
 	{	// print everything in new lines
-		std::map<std::string, int> map;
-		for(Splay::iterator it = this->begin(); it != this->end(); ++it){
-			const std::string val = convertToLower(it->first);
-			if(map.find(val) == map.end()) map.insert(std::make_pair(val, it->second));
-			else map[val] += it->second;
-		}
-		for(std::map<std::string, int>::iterator it = map.begin(); it != map.end(); ++it)
+		for(Splay::iterator it = this->begin(); it != this->end(); ++it)
 			output << it->first << " " << it->second << std::endl;
+		std::cout << "Count: " << count << std::endl;
 	}
 
 private:
+	unsigned int count;
+
 	const std::string convertToLower(const std::string & string) const
 	{
 		std::string word = string;
